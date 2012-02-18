@@ -18,6 +18,8 @@
       $this->parentIdKey = $parentKey;
       $this->nameKey = $nameKey;
 
+      $categoryArrayByCategoryId = array();
+
       foreach ($this->categoryArray as $category) {
       
         $categoryArrayByCategoryId[$category[$this->idKey]][$this->nameKey] = $category[$this->nameKey];
@@ -117,8 +119,6 @@
           $sortedArray[$arraySize][$this->idKey] = $category[$this->idKey];
           $sortedArray[$arraySize]['level'] = $level;
 
-          echo("in foreach!");
-
           $sortedArray = $this->makeCategoryTreeArray($sortedArray,$category[$this->idKey],($level+1));
 
         }
@@ -126,6 +126,41 @@
       }
 
       return $sortedArray;
+
+    }
+
+    public function getCategoryPath($categoryID) {
+
+      $treeArray = array();
+
+      $i = 0;
+
+      $treeArray[$i]['name'] = $this->getCategoryName($categoryID);
+      $treeArray[$i]['id'] = $categoryID;
+
+      while ($parentID = $this->getCategoryParentID($categoryID)) {
+
+        $i++;
+
+        $treeArray[$i]['name'] = $this->getCategoryName($parentID);
+        $treeArray[$i]['id'] = $parentID;
+
+        $categoryID = $parentID;
+
+      }
+
+      $z = 0;
+
+      for ($i = (count($treeArray)-1); $i>=0; $i--) {
+
+        $sortedTreeArray[$z]['name'] = $treeArray[$i]['name'];
+        $sortedTreeArray[$z]['id'] = $treeArray[$i]['id'];
+        $sortedTreeArray[$z]['level'] = (count($treeArray)-$i);
+        $z++;
+
+      }
+
+      return $sortedTreeArray;
 
     }
 
